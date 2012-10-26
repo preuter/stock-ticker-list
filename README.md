@@ -8,7 +8,7 @@ Usage
 -----
 
 The fastest way to invoke the code is from command-line:
-`$ php -q SymbolListArchiver.php > symbols.lst`
+`$ php -q builder.php > symbols.lst`
 
 
 About

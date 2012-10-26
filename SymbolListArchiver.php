@@ -1,18 +1,20 @@
 <?php
 /**
  * @file SymbolListArchiver.php
- * @date 2012-08-15 09:37 PDT
+ * @date 2012-10-26 09:23 PDT
  * @author Paul Reuter
- * @version 1.0.1
+ * @version 1.0.2
  *
  * @modifications
  * 1.0.0 - 2012-03-16 - Created
  * 1.0.1 - 2012-08-15 - BugFix: case sensitivity. Change m_rootDir
+ * 1.0.2 - 2012-10-26 - Modify: Moved execute code to builder.php
  */
 
 
 require_once(dirname(__FILE__).'/Archiver.php');
 require_once(dirname(__FILE__).'/HTMLTable.php');
+
 
 /**
  * @package YahooDataRetrievalSystem
@@ -262,18 +264,6 @@ class EtfSymbolListArchiver extends SymbolListArchiver {
   } // END: function getFilePath($datets=null)
 
 } // END: class EtfSymbolListArchiver extends SymbolListArchiver
-
-
-$lst = new SymbolListArchiver();
-if( $lst->acquire() ) { 
-  $map = $lst->getSymbolNameMap();
-  $n=0;
-  foreach( $map as $k=>$v ) { 
-    printf("%5d\t%s\t%s\n",++$n,$k,$v);
-  }
-} else { 
-  error_log("epic failure.");
-}
 
 // EOF -- SymbolListArchiver.php
 ?>
