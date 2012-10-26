@@ -1,14 +1,15 @@
 <?php
 /**
  * @file SymbolListArchiver.php
- * @date 2012-10-26 09:23 PDT
+ * @date 2012-10-26 09:50 PDT
  * @author Paul Reuter
- * @version 1.0.2
+ * @version 1.0.3
  *
  * @modifications
  * 1.0.0 - 2012-03-16 - Created
  * 1.0.1 - 2012-08-15 - BugFix: case sensitivity. Change m_rootDir
  * 1.0.2 - 2012-10-26 - Modify: Moved execute code to builder.php
+ * 1.0.3 - 2012-10-26 - Modify: Added getExchangeSymbolNameTuple()
  */
 
 
@@ -60,44 +61,56 @@ class SymbolListArchiver extends Archiver {
   
   function getSymbolNameMap() { 
     $map = array();
+    foreach ($this->getExchangeSymbolNameTuple() as $row) { 
+      $map[$row[1]] = $row[2];
+    }
+    return $map;
+  } // END: function getSymbolNameMap()
+
+
+  function getExchangeSymbolNameTuple() { 
+    $tuple = array();
 
     $ach = new NasdaqSymbolListArchiver(array('DATA_DIR'=>$this->m_rootDir));
     $mat = $ach->parseCSVFile($ach->getExchangeFilePath('NASDAQ'));
     $ihdr = array_flip(array_shift($mat));
-    $this->m_extractKeyValueMap($mat,$ihdr['Symbol'],$ihdr['Name'],$map);
+    foreach($mat as $row) { 
+      $tuple[] = array('NASDAQ',$row[$ihdr['Symbol']],$row[$ihdr['Name']]);
+    }
+
     $mat = $ach->parseCSVFile($ach->getExchangeFilePath('NYSE'));
     $ihdr = array_flip(array_shift($mat));
-    $this->m_extractKeyValueMap($mat,$ihdr['Symbol'],$ihdr['Name'],$map);
+    foreach($mat as $row) { 
+      $tuple[] = array('NYSE',$row[$ihdr['Symbol']],$row[$ihdr['Name']]);
+    }
+
     $mat = $ach->parseCSVFile($ach->getExchangeFilePath('AMEX'));
     $ihdr = array_flip(array_shift($mat));
-    $this->m_extractKeyValueMap($mat,$ihdr['Symbol'],$ihdr['Name'],$map);
+    foreach($mat as $row) { 
+      $tuple[] = array('AMEX',$row[$ihdr['Symbol']],$row[$ihdr['Name']]);
+    }
 
     $ach = new OtcSymbolListArchiver(array('DATA_DIR'=>$this->m_rootDir));
     $mat = $ach->parseCSVFile($ach->getFilePath());
     $ihdr = array_flip(array_shift($mat));
     foreach($mat as $row) { 
-      $map[$ach->getSymbolFromRow($row,$ihdr)] = $row[$ihdr['Security Name']];
+      $tuple[] = array(
+        'OTCBB',
+        $ach->getSymbolFromRow($row,$ihdr),
+        $row[$ihdr['Security Name']]
+      );
     }
 
     // NB: Etfs parse HTML, hence separate parser.
     $ach = new EtfSymbolListArchiver(array('DATA_DIR'=>$this->m_rootDir));
     $mat = $ach->parseFile($ach->getFilePath());
     $ihdr = array_flip(array_shift($mat));
-    $this->m_extractKeyValueMap($mat,$ihdr['Ticker'],$ihdr['Fund Name'],$map);
-
-    return $map;
-  } // END: function getSymbolNameMap()
-
-
-  function m_extractKeyValueMap(&$mat,$kix,$vix,&$map=null) {
-    if( $map===null ) { 
-      $map = array();
-    }
     foreach($mat as $row) { 
-      $map[$row[$kix]] = $row[$vix];
+      $tuple[] = array('ETF',$row[$ihdr['Ticker']],$row[$ihdr['Fund Name']]);
     }
-    return $map;
-  } // END: function m_extractKeyValueMap(&$mat,$kix,$vix,&$map=null)
+
+    return $tuple;
+  } // END: function getSymbolNameExchangeTuple()
 
 
   function parseCSVFile($fpath) {

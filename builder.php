@@ -1,12 +1,13 @@
 <?php
 /**
  * @file builder.php
- * @date 2012-10-26 09:21 PDT
+ * @date 2012-10-26 09:50 PDT
  * @author Paul Reuter
- * @version 1.0.0
+ * @version 1.0.1
  *
  * @modifications
  * 1.0.0 - 2012-10-26 - Exfiltrated from SymbolListArchiver.php
+ * 1.0.1 - 2012-10-26 - Modify: Added header, column for exchange.
  */
 
 
@@ -20,10 +21,13 @@ function main($args) {
 
   $lst = new SymbolListArchiver();
   if( $lst->acquire() ) { 
-    $map = $lst->getSymbolNameMap();
+    $tuple = $lst->getExchangeSymbolNameTuple();
+    array_multisort($tuple);
     $n=0;
-    foreach( $map as $k=>$v ) { 
-      printf("%5d\t%s\t%s\n",++$n,$k,$v);
+    printf("%5s\t%s\t%s\t%s\n","ID","Exchange","Symbol","Name");
+    foreach( $tuple as $record ) { 
+      list($exch,$sym,$name) = $record;
+      printf("%5d\t%s\t%s\t%s\n",++$n,$exch,$sym,$name);
     }
   } else { 
     error_log("epic failure.");
