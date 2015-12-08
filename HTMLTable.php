@@ -3,25 +3,11 @@
   * Parse HTML extracting information. An SGMLTable would be different.
   *
   * @file HTMLTable.php
-  * @date 2011-04-13 15:10 HST
-  * @author Paul Reuter
+  * @date 12/7/2015 
+  * @author mukmuk623
   * @version 1.0.7
-  *
-  * @modifications
-  * 1.0.0 - 2010-12-10 - Created
-  * 1.0.1 - 2010-12-11 - Add: matching($preg,$limit=1) method
-  * 1.0.2 - 2010-12-14 - Add: extractTablesHTML(&$txt)
-  * 1.0.3 - 2010-12-19 - Add: extractTableHTML(&$src,$anchor,$numSkips=0)
-  * 1.0.4 - 2011-01-01 - BugFix: extractTableHTML(&$src... )
-  * 1.0.5 - 2011-02-20 - BugFix: extractTableHTML for eoddata parsing.
-  * 1.0.6 - 2011-02-20 - BugFix: buildFromHierarchy counting TH columns.
-  * 1.0.7 - 2011-04-13 - BugFix: thead>th should be appended to head.
-  */
 
 
-/**
- * Extract a table from HTML.  Table may contain nested tables.
- */
 class HTMLTable { 
   var $title; // Store the caption
   var $head;  // Header rows
